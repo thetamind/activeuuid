@@ -28,36 +28,49 @@ describe Article do
 end
 
 describe UuidArticle do
-  let!(:article) { Fabricate :uuid_article }
-  let(:id) { article.id }
   let(:model) { UuidArticle }
 
   specify { model.primary_key.should == 'id' }
 
-  context 'existance' do
-    specify { article.id.should be_a UUIDTools::UUID }
-    it "should create record" do
-      model.all.should == [article]
-      model.first.should == article
+  context 'new record' do
+    let!(:article) { Fabricate.build :uuid_article }
+
+    context 'validation' do
+      specify { article.id.should be_a UUIDTools::UUID }
+      specify { article.should be_new_record }
+      specify { article.should be_valid }
     end
   end
 
-  context '.find' do
-    specify { model.find(article).should == article }
-    specify { model.find(id).should == article }
-    specify { model.find(id.to_s).should == article }
-    specify { model.find(id.raw).should == article }
-  end
+  context 'persisted' do
+    let!(:article) { Fabricate :uuid_article }
+    let(:id) { article.id }
 
-  context '.where' do
-    specify { model.where(:id => article).first.should == article }
-    specify { model.where(:id => id).first.should == article }
-    specify { model.where(:id => id.to_s).first.should == article }
-    specify { model.where(:id => id.raw).first.should == article }
-  end
+    context 'existance' do
+      specify { article.id.should be_a UUIDTools::UUID }
+      it "should create record" do
+        model.all.should == [article]
+        model.first.should == article
+      end
+    end
 
-  context '.destroy' do
-    specify { article.delete.should be_true }
-    specify { article.destroy.should be_true }
+    context '.find' do
+      specify { model.find(article).should == article }
+      specify { model.find(id).should == article }
+      specify { model.find(id.to_s).should == article }
+      specify { model.find(id.raw).should == article }
+    end
+
+    context '.where' do
+      specify { model.where(:id => article).first.should == article }
+      specify { model.where(:id => id).first.should == article }
+      specify { model.where(:id => id.to_s).first.should == article }
+      specify { model.where(:id => id.raw).first.should == article }
+    end
+
+    context '.destroy' do
+      specify { article.delete.should be_true }
+      specify { article.destroy.should be_true }
+    end
   end
 end

@@ -95,7 +95,7 @@ module ActiveUUID
     included do
       class_attribute :uuid_attributes, :instance_writer => true
       uuids :id
-      before_create :generate_uuids_if_needed
+      after_initialize :generate_uuids_if_needed
     end
 
     module ClassMethods
